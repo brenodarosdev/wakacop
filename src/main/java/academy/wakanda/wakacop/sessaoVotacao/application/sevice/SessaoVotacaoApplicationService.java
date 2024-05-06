@@ -4,10 +4,7 @@ import academy.wakanda.wakacop.pauta.application.service.PautaRepository;
 import academy.wakanda.wakacop.pauta.application.service.PautaService;
 import academy.wakanda.wakacop.pauta.domain.Pauta;
 import academy.wakanda.wakacop.pauta.infra.PautaInfraRepository;
-import academy.wakanda.wakacop.sessaoVotacao.application.api.SessaoAberturaRequest;
-import academy.wakanda.wakacop.sessaoVotacao.application.api.SessaoAberturaResponse;
-import academy.wakanda.wakacop.sessaoVotacao.application.api.VotoRequest;
-import academy.wakanda.wakacop.sessaoVotacao.application.api.VotoResponse;
+import academy.wakanda.wakacop.sessaoVotacao.application.api.*;
 import academy.wakanda.wakacop.sessaoVotacao.domain.SessaoVotacao;
 import academy.wakanda.wakacop.sessaoVotacao.domain.VotoPauta;
 import lombok.RequiredArgsConstructor;
@@ -40,5 +37,14 @@ public class SessaoVotacaoApplicationService implements SessaoVotacaoService {
         sessaoVotacaoRepository.salva(sessaoVotacao);
         log.info("[finaliza] SessaoVotacaoApplicationService - recebeVoto");
         return new VotoResponse(voto);
+    }
+
+    public ResultadoSessaoResponse obtemResultado(UUID idSessao) {
+        log.info("[inicia] SessaoVotacaoApplicationService - obtemResultado");
+        SessaoVotacao sessao = sessaoVotacaoRepository.buscaPorId(idSessao);
+        ResultadoSessaoResponse resultado = sessao.obtemResultado();
+        sessaoVotacaoRepository.salva(sessao);
+        log.info("[finaliza] SessaoVotacaoApplicationService - obtemResultado");
+        return resultado;
     }
 }
