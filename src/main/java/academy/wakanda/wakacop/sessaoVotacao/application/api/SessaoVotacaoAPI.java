@@ -1,10 +1,10 @@
 package academy.wakanda.wakacop.sessaoVotacao.application.api;
 
 import academy.wakanda.wakacop.sessaoVotacao.domain.VotoPauta;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController

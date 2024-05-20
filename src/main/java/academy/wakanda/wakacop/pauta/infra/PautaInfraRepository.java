@@ -3,9 +3,7 @@ package academy.wakanda.wakacop.pauta.infra;
 import academy.wakanda.wakacop.pauta.application.service.PautaRepository;
 import academy.wakanda.wakacop.pauta.domain.Pauta;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
-import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;

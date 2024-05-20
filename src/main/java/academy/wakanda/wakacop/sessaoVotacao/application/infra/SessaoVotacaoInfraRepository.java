@@ -4,7 +4,6 @@ import academy.wakanda.wakacop.sessaoVotacao.application.sevice.SessaoVotacaoRep
 import academy.wakanda.wakacop.sessaoVotacao.domain.SessaoVotacao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
@@ -25,10 +24,10 @@ public class SessaoVotacaoInfraRepository implements SessaoVotacaoRepository {
 
     @Override
     public SessaoVotacao buscaPorId(UUID idSessao) {
-        log.info("[inicia] SessaoVotacaoInfraRepository - buscaPorId");
+        log.debug("[inicia] SessaoVotacaoInfraRepository - buscaPorId");
         SessaoVotacao sessaoVotacao = sessaoVotacaoSpringDataJPARepository.findById(idSessao)
                 .orElseThrow(() -> new RuntimeException("Sessão não encontrada"));
-        log.info("[finaliza] SessaoVotacaoInfraRepository - buscaPorId");
+        log.debug("[finaliza] SessaoVotacaoInfraRepository - buscaPorId");
         return sessaoVotacao;
     }
 }
