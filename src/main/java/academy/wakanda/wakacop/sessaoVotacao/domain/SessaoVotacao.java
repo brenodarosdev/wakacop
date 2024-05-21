@@ -26,7 +26,7 @@ public class SessaoVotacao {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "uuid", updatable = false, unique = true, nullable = false)
-    private UUID id;
+    private UUID idSessao;
     private UUID idPauta;
     private Integer tempoDuracao;
     @Enumerated(EnumType.STRING)
@@ -51,30 +51,32 @@ public class SessaoVotacao {
         votos = new HashMap<>();
     }
 
-    public VotoPauta recebeVoto(VotoRequest votoRequest, AssosiadoService assosiadoService) {
-        validaSessaoAberta();
+    public VotoPauta recebeVoto(VotoRequest votoRequest, AssosiadoService assosiadoService, PublicadorResultadoSessao publicadorResultadoSessao) {
+        validaSessaoAberta(publicadorResultadoSessao);
         validaAssociado(votoRequest.getCpfAssociado(), assosiadoService);
         VotoPauta voto = new VotoPauta(this, votoRequest);
         votos.put(votoRequest.getCpfAssociado(), voto);
         return voto;
     }
 
-    private void validaSessaoAberta() {
+    private void validaSessaoAberta(PublicadorResultadoSessao publicadorResultadoSessao) {
+        atualizaStatus(publicadorResultadoSessao);
         if(this.status.equals(StatusSessaoVotacao.FECHADA)) {
             throw new RuntimeException("Sessão está fechada!");
         }
     }
 
-    private void atualizaStatus() {
+    private void atualizaStatus(PublicadorResultadoSessao publicadorResultadoSessao) {
         if(this.status.equals(StatusSessaoVotacao.ABERTA)) {
             if (LocalDateTime.now().isAfter(this.momentoEncerramento)) {
-                fechaSessao();
+                fechaSessao(publicadorResultadoSessao);
             }
         }
     }
 
-    private void fechaSessao() {
+    private void fechaSessao(PublicadorResultadoSessao publicadorResultadoSessao) {
         this.status = StatusSessaoVotacao.FECHADA;
+        publicadorResultadoSessao.publica(new ResultadoSessaoResponse(this));
     }
 
     private void validaAssociado(String cpfAssociado, AssosiadoService assosiadoService) {
@@ -88,8 +90,8 @@ public class SessaoVotacao {
         }
     }
 
-    public ResultadoSessaoResponse obtemResultado() {
-        atualizaStatus();
+    public ResultadoSessaoResponse obtemResultado(PublicadorResultadoSessao publicadorResultadoSessao) {
+        atualizaStatus(publicadorResultadoSessao);
         return new ResultadoSessaoResponse(this);
     }
 

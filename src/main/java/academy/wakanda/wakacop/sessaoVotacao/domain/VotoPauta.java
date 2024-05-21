@@ -34,7 +34,7 @@ public class  VotoPauta {
     }
 
     public UUID getIdSessao() {
-        return this.sessaoVotacao.getId();
+        return this.sessaoVotacao.getIdSessao();
     }
 
     public boolean opcaoIgual(OpcaoVoto opcao) {
