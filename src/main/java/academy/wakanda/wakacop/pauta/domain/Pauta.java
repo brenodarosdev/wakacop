@@ -1,12 +1,9 @@
 package academy.wakanda.wakacop.pauta.domain;
 
 import academy.wakanda.wakacop.pauta.application.api.NovaPautaRequest;
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -14,6 +11,8 @@ import java.util.UUID;
 @Entity
 @ToString
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+@AllArgsConstructor
 public class Pauta {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
