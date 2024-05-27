@@ -58,7 +58,7 @@ public class SessaoVotacao {
         return voto;
     }
 
-    private void validaSessaoAberta(PublicadorResultadoSessao publicadorResultadoSessao) {
+    void validaSessaoAberta(PublicadorResultadoSessao publicadorResultadoSessao) {
         atualizaStatus(publicadorResultadoSessao);
         if(this.status.equals(StatusSessaoVotacao.FECHADA)) {
             throw new RuntimeException("Sessão está fechada!");
@@ -78,12 +78,12 @@ public class SessaoVotacao {
         publicadorResultadoSessao.publica(new ResultadoSessaoResponse(this));
     }
 
-    private void validaAssociado(String cpfAssociado, AssosiadoService assosiadoService) {
+    void validaAssociado(String cpfAssociado, AssosiadoService assosiadoService) {
         assosiadoService.validaAssociadoAptoVoto(cpfAssociado);
         validaVotoDuplicado(cpfAssociado);
     }
 
-    private void validaVotoDuplicado(String cpfAssociado) {
+    void validaVotoDuplicado(String cpfAssociado) {
         if(this.votos.containsKey(cpfAssociado)) {
             throw new RuntimeException("Associado já votou nessa sessão!");
         }

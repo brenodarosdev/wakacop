@@ -1,5 +1,7 @@
 package academy.wakanda.wakacop.sessaoVotacao.application.api;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -8,6 +10,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @ToString
+@Builder
+@AllArgsConstructor
 public class SessaoAberturaRequest {
     @Getter
     @NotNull
