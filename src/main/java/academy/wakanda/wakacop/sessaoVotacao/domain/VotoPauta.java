@@ -1,10 +1,7 @@
 package academy.wakanda.wakacop.sessaoVotacao.domain;
 
 import academy.wakanda.wakacop.sessaoVotacao.application.api.VotoRequest;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,6 +10,8 @@ import java.util.UUID;
 @Getter
 @Entity
 @ToString
+@Builder(access = AccessLevel.PACKAGE)
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class  VotoPauta {
     @Id
@@ -34,7 +33,7 @@ public class  VotoPauta {
     }
 
     public UUID getIdSessao() {
-        return this.sessaoVotacao.getId();
+        return this.sessaoVotacao.getIdSessao();
     }
 
     public boolean opcaoIgual(OpcaoVoto opcao) {

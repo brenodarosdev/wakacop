@@ -5,10 +5,7 @@ import academy.wakanda.wakacop.pauta.domain.Pauta;
 import academy.wakanda.wakacop.sessaoVotacao.application.api.ResultadoSessaoResponse;
 import academy.wakanda.wakacop.sessaoVotacao.application.api.SessaoAberturaRequest;
 import academy.wakanda.wakacop.sessaoVotacao.application.api.VotoRequest;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -21,12 +18,14 @@ import java.util.UUID;
 @Getter
 @Entity
 @ToString
+@Builder(access = AccessLevel.PACKAGE)
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SessaoVotacao {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "uuid", updatable = false, unique = true, nullable = false)
-    private UUID id;
+    private UUID idSessao;
     private UUID idPauta;
     private Integer tempoDuracao;
     @Enumerated(EnumType.STRING)
@@ -51,45 +50,47 @@ public class SessaoVotacao {
         votos = new HashMap<>();
     }
 
-    public VotoPauta recebeVoto(VotoRequest votoRequest, AssosiadoService assosiadoService) {
-        validaSessaoAberta();
+    public VotoPauta recebeVoto(VotoRequest votoRequest, AssosiadoService assosiadoService, PublicadorResultadoSessao publicadorResultadoSessao) {
+        validaSessaoAberta(publicadorResultadoSessao);
         validaAssociado(votoRequest.getCpfAssociado(), assosiadoService);
         VotoPauta voto = new VotoPauta(this, votoRequest);
         votos.put(votoRequest.getCpfAssociado(), voto);
         return voto;
     }
 
-    private void validaSessaoAberta() {
+    void validaSessaoAberta(PublicadorResultadoSessao publicadorResultadoSessao) {
+        atualizaStatus(publicadorResultadoSessao);
         if(this.status.equals(StatusSessaoVotacao.FECHADA)) {
             throw new RuntimeException("Sessão está fechada!");
         }
     }
 
-    private void atualizaStatus() {
+    void atualizaStatus(PublicadorResultadoSessao publicadorResultadoSessao) {
         if(this.status.equals(StatusSessaoVotacao.ABERTA)) {
             if (LocalDateTime.now().isAfter(this.momentoEncerramento)) {
-                fechaSessao();
+                fechaSessao(publicadorResultadoSessao);
             }
         }
     }
 
-    private void fechaSessao() {
+    void fechaSessao(PublicadorResultadoSessao publicadorResultadoSessao) {
         this.status = StatusSessaoVotacao.FECHADA;
+        publicadorResultadoSessao.publica(new ResultadoSessaoResponse(this));
     }
 
-    private void validaAssociado(String cpfAssociado, AssosiadoService assosiadoService) {
+    void validaAssociado(String cpfAssociado, AssosiadoService assosiadoService) {
         assosiadoService.validaAssociadoAptoVoto(cpfAssociado);
         validaVotoDuplicado(cpfAssociado);
     }
 
-    private void validaVotoDuplicado(String cpfAssociado) {
+    void validaVotoDuplicado(String cpfAssociado) {
         if(this.votos.containsKey(cpfAssociado)) {
             throw new RuntimeException("Associado já votou nessa sessão!");
         }
     }
 
-    public ResultadoSessaoResponse obtemResultado() {
-        atualizaStatus();
+    public ResultadoSessaoResponse obtemResultado(PublicadorResultadoSessao publicadorResultadoSessao) {
+        atualizaStatus(publicadorResultadoSessao);
         return new ResultadoSessaoResponse(this);
     }
 
